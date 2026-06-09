@@ -1,24 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cute Gallery</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plss say yess!</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4b6e'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E" type="image/svg+xml">
+
+<style>
+    /* --- Your Existing Heart Background CSS --- */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        overflow: hidden;
+        height: 100vh;
+        background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: background 1s ease; 
+    }
+
+    .heart {
+        position: absolute;
+        bottom: -50px;
+        color: rgba(255, 255, 255, 0.85); 
+        font-size: 20px;
+        animation: floatUp linear forwards;
+        user-select: none;
+        pointer-events: none;
+        z-index: 1; 
+        transition: color 0.5s ease, text-shadow 0.5s ease; 
+    }
+
+    /* --- The Success State Hearts --- */
+    body.success .heart {
+        color: #ff003c; 
+        text-shadow: 0 0 12px rgba(255, 0, 60, 0.6); 
+    }
+
+    @keyframes floatUp {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* --- Modal & Button CSS --- */
+    .modal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        z-index: 10; 
+        min-width: 320px;
+        max-width: 80%; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px; 
+    }
+
+    h1 {
+        color: #ff4b6e;
+        margin-bottom: 30px;
+        font-size: 28px;
+        line-height: 1.4;
+    }
+
+    /* --- UPDATED: The Smart Blinking Cursor --- */
+    /* It now only applies when the .typing-active class is actively on the element */
+    .typing-active::after {
+        content: '|';
+        animation: blink 0.7s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    .bounce-dot {
+        display: inline-block;
+        animation: bounceDot 0.5s infinite alternate;
+    }
+
+    .bounce-dot:nth-child(1) { animation-delay: 0s; }
+    .bounce-dot:nth-child(2) { animation-delay: 0.15s; }
+    .bounce-dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes bounceDot {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-8px); }
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
+
+    button {
+        padding: 12px 24px;
+        font-size: 18px;
+        font-weight: bold;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease; 
+        white-space: nowrap;
+    }
+
+    /* Continue Button Specific Styling */
+    #continue-btn {
+        background-color: #ff4b6e; 
+        color: white;
+        margin-top: 10px;
+        animation: pulse 1.5s infinite alternate;
+    }
+    
+    #continue-btn:hover { background-color: #ff1c45; transform: scale(1.05); }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.05); }
+    }
+
+    #yes-btn { background-color: #ff4b6e; color: white; }
+    #yes-btn:hover { background-color: #ff1c45; }
+    #no-btn { background-color: #f0f0f0; color: #555; }
+    #no-btn:hover { background-color: #e0e0e0; }
+
+    @keyframes fadeInEffect {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+        animation: fadeInEffect 1.5s ease-out forwards;
+    }
+
+    /* --- Emoji Burst Animation --- */
+    .burst-emoji {
+        position: fixed;
+        font-size: 35px;
+        pointer-events: none; 
+        z-index: 20; 
+        animation: popAndFade 1.5s ease-out forwards;
+    }
+
+    @keyframes popAndFade {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        40% { transform: scale(1.2) translateY(-30px); opacity: 1; }
+        100% { transform: scale(1) translateY(-80px); opacity: 0; }
+    }
+</style>
 </head>
 <body>
-    <header>
-        <h1>New Beginnings</h1>
-        <p>A collection of my favorite Genshin Impact moments and character builds.</p>
-    </header>
 
-    <main class="gallery">
-        <div class="card">
-            <img src="images/photo1.jpg" alt="Gallery Image 1">
+<audio id="bg-music" loop>
+    <source src="bg-music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="modal">
+    <h1 id="typing-text"></h1>
+
+    <div id="continue-container" style="display: none; opacity: 0; flex-direction: column; align-items: center;">
+        <h1 style="font-size: 24px; margin-bottom: 20px;">syempre let's set the mood muna,<br> plss click to continue</h1>
+        <button id="continue-btn">Continue</button>
+    </div>
+
+    <div id="main-content" style="display: none; opacity: 0;">
+        <h1 id="question">Will you go on a date with me?</h1>
+        <div class="button-container">
+            <button id="yes-btn">Yes</button>
+            <button id="no-btn">No</button>
         </div>
-        <div class="card">
-            <img src="images/photo2.jpg" alt="Gallery Image 2">
-        </div>
-    </main>
+    </div>
+</div>
+
+<script>
+    /* --- Your Existing Heart Animation JS --- */
+    function createHeart() {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "❤";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        const size = Math.random() * 30 + 15;
+        heart.style.fontSize = size + "px";
+        const duration = Math.random() * 6 + 6;
+        heart.style.animationDuration = duration + "s";
+        heart.style.opacity = Math.random();
+        document.body.appendChild(heart);
+
+        setTimeout(() => { heart.remove(); }, duration * 1000);
+    }
+    setInterval(createHeart, 50);
+
+    /* --- The Typing Animation Logic --- */
+    const typingText = document.getElementById("typing-text");
+    const mainContent = document.getElementById("main-content");
+    const questionText = document.getElementById("question");
+    const continueContainer = document.getElementById("continue-container");
+    const continueBtn = document.getElementById("continue-btn");
+    
+    // Intro Phrases
+    const phrase1 = "hi po cutiee";
+    const phrase2 = "I wanna ask you a question";
+    const phrase3 = "I know you're smart kaya madali mo to masasagot";
+    const phrase4 = "since you're up for the task";
+    const phrase5 = "here it goes";
+
+    // Post-Yes Phrases
+    const endPhrase1 = "glad you picked the right option";
+    const endPhrase2 = "you did agree as fast you can right 🤨";
+    const endPhrase3 = "no worries I trust you cutiee so";
+    const endPhrase4 = "no pressure and I hope you are as excited as I am 🥰";
+    const endPhrase5 = "wear something nice and comfy cuz";
+    const finalDateText = "I'll be seeing you po this coming Friday at SM Dasma 10 PM! 🎉";
+    
+    const typingSpeed = 80; 
+    const pauseBetweenPhrases = 2500; 
+
+    // --- UPDATED: The Reusable Typewriter Function ---
+    function typeWriter(element, text, i, callback) {
+        // Automatically add the blinking cursor when it starts typing a new line
+        if (i === 0) {
+            element.classList.add("typing-active");
+        }
+
+        const characters = Array.from(text); 
+        
+        if (i < characters.length) {
+            element.innerHTML += characters[i];
+            setTimeout(() => typeWriter(element, text, i + 1, callback), typingSpeed);
+        } else {
+            // Remove the blinking cursor the exact millisecond the typing is done
+            element.classList.remove("typing-active");
+            
+            // Add the bouncing dots to load while it waits
+            element.innerHTML += '<span class="bounce-dot">.</span><span class="bounce-dot">.</span><span class="bounce-dot">.</span>';
+            setTimeout(callback, pauseBetweenPhrases);
+        }
+    }
+
+    function startSequence() {
+        typeWriter(typingText, phrase1, 0, () => {
+            typingText.innerHTML = ""; 
+            typeWriter(typingText, phrase2, 0, () => {
+                typingText.innerHTML = ""; 
+                typeWriter(typingText, phrase3, 0, () => {
+                    typingText.style.display = "none"; 
+                    continueContainer.style.display = "flex";
+                    continueContainer.classList.add("fade-in");
+                });
+            });
+        });
+    }
+
+    window.onload = startSequence;
+
+
+    /* --- NEW: Audio Trigger Logic with Fade-in --- */
+    const bgMusic = document.getElementById("bg-music");
+    let isMusicPlaying = false; 
+
+    function startMusic() {
+        if (!isMusicPlaying) {
+            bgMusic.currentTime = 5; 
+            bgMusic.volume = 0; // NEW: Start the volume at 0
+            
+            bgMusic.play().catch(e => console.log("Audio error:", e));
+            isMusicPlaying = true; 
+            
+            // NEW: Gradually increase the volume every 100ms
+            const fadeAudio = setInterval(() => {
+                // If volume is less than 1 (max), increase it slightly
+                if (bgMusic.volume < 1.0) {
+                    // Use Math.min to ensure it never accidentally goes over 1.0
+                    bgMusic.volume = Math.min(1.0, bgMusic.volume + 0.05);
+                } else {
+                    // Once it hits 1.0, stop the interval timer
+                    clearInterval(fadeAudio);
+                }
+            }, 100); 
+        }
+    }
+
+    /* --- Continue Button Event --- */
+    continueBtn.addEventListener("click", () => {
+        startMusic();
+        continueContainer.style.display = "none";
+        typingText.style.display = "block";
+        typingText.innerHTML = "";
+
+        typeWriter(typingText, phrase4, 0, () => {
+            typingText.innerHTML = ""; 
+            typeWriter(typingText, phrase5, 0, () => {
+                typingText.style.display = "none"; 
+                mainContent.style.display = "block"; 
+                mainContent.classList.add("fade-in");
+            });
+        });
+    });
+
+
+    // --- Post-Yes Sequence ---
+    function startEndingSequence() {
+        questionText.innerHTML = ""; 
+
+        typeWriter(questionText, endPhrase1, 0, () => {
+            questionText.innerHTML = ""; 
+            typeWriter(questionText, endPhrase2, 0, () => {
+                questionText.innerHTML = ""; 
+                typeWriter(questionText, endPhrase3, 0, () => {
+                questionText.innerHTML = ""; 
+                typeWriter(questionText, endPhrase4, 0, () => {
+                questionText.innerHTML = ""; 
+                typeWriter(questionText, endPhrase5, 0, () => {
+                    // Final reveal! (No cursor will be active here)
+                    questionText.innerHTML = finalDateText; 
+                         });
+                    });
+                });
+            });
+        });
+    }
+
+
+    /* --- The Interactive Logic --- */
+    const noButton = document.getElementById("no-btn");
+    const yesButton = document.getElementById("yes-btn");
+    const buttonContainer = document.querySelector(".button-container");
+    const modalElement = document.querySelector(".modal"); 
+
+    let yesFontSize = 18;
+    let yesPaddingV = 12; 
+    let yesPaddingH = 24; 
+
+    let noFontSize = 18;
+    let noPaddingV = 12;
+    let noPaddingH = 24;
+
+    let noClickCount = 0; 
+    let emojisToSpawn = 4; 
+    let lastSpawnCount = 4; 
+
+    function shrinkNoGrowYes() {
+        startMusic(); 
+        noClickCount++;
+
+        const currentEmoji = noClickCount >= 5 ? "🥺" : "😭";
+        lastSpawnCount = Math.floor(emojisToSpawn);
+        
+        const modalRect = modalElement.getBoundingClientRect();
+        
+        for (let i = 0; i < lastSpawnCount; i++) {
+            const emoji = document.createElement("div");
+            emoji.classList.add("burst-emoji"); 
+            emoji.innerText = currentEmoji;
+
+            const randomX = modalRect.left + (Math.random() * (modalRect.width - 30));
+            const randomY = modalRect.top + (Math.random() * (modalRect.height - 30));
+
+            emoji.style.left = `${randomX}px`;
+            emoji.style.top = `${randomY}px`;
+
+            document.body.appendChild(emoji);
+
+            setTimeout(() => { emoji.remove(); }, 1500);
+        }
+
+        emojisToSpawn *= 1.5;
+
+        yesFontSize += 15; 
+        yesPaddingV += 10;
+        yesPaddingH += 20;
+
+        noFontSize -= 2;
+        noPaddingV -= 2;
+        noPaddingH -= 2;
+
+        if (noFontSize < 0) noFontSize = 0;
+        if (noPaddingV < 0) noPaddingV = 0;
+        if (noPaddingH < 0) noPaddingH = 0;
+
+        yesButton.style.fontSize = `${yesFontSize}px`;
+        yesButton.style.padding = `${yesPaddingV}px ${yesPaddingH}px`;
+
+        noButton.style.fontSize = `${noFontSize}px`;
+        noButton.style.padding = `${noPaddingV}px ${noPaddingH}px`;
+        
+        if (noFontSize === 0) {
+            noButton.style.display = "none";
+        }
+    }
+
+    noButton.addEventListener("click", shrinkNoGrowYes);
+
+    yesButton.addEventListener("click", () => {
+        startMusic();
+
+        buttonContainer.style.display = "none"; 
+        document.body.classList.add("success");
+
+        const modalRect = modalElement.getBoundingClientRect();
+        for (let i = 0; i < lastSpawnCount; i++) {
+            const emoji = document.createElement("div");
+            emoji.classList.add("burst-emoji"); 
+            emoji.innerText = "🥰"; 
+
+            const randomX = modalRect.left + (Math.random() * (modalRect.width - 30));
+            const randomY = modalRect.top + (Math.random() * (modalRect.height - 30));
+
+            emoji.style.left = `${randomX}px`;
+            emoji.style.top = `${randomY}px`;
+
+            document.body.appendChild(emoji);
+
+            setTimeout(() => { emoji.remove(); }, 1500);
+        }
+
+        startEndingSequence();
+    });
+</script>
+
 </body>
 </html>
