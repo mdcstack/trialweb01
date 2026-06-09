@@ -74,8 +74,7 @@
         line-height: 1.4;
     }
 
-    /* --- UPDATED: The Smart Blinking Cursor --- */
-    /* It now only applies when the .typing-active class is actively on the element */
+    /* --- The Smart Blinking Cursor --- */
     .typing-active::after {
         content: '|';
         animation: blink 0.7s infinite;
@@ -202,7 +201,15 @@
 
         setTimeout(() => { heart.remove(); }, duration * 1000);
     }
-    setInterval(createHeart, 50);
+
+    // --- NEW: Dynamic Mobile vs Desktop Spawn Rate ---
+    // If window is smaller than 768px wide (phones), spawn a heart every 150ms. 
+    // If it's a desktop, spawn one every 50ms.
+    const isMobile = window.innerWidth < 768;
+    const heartSpawnRate = isMobile ? 150 : 50;
+    
+    setInterval(createHeart, heartSpawnRate);
+
 
     /* --- The Typing Animation Logic --- */
     const typingText = document.getElementById("typing-text");
@@ -229,9 +236,8 @@
     const typingSpeed = 80; 
     const pauseBetweenPhrases = 2500; 
 
-    // --- UPDATED: The Reusable Typewriter Function ---
+    // The Reusable Typewriter Function
     function typeWriter(element, text, i, callback) {
-        // Automatically add the blinking cursor when it starts typing a new line
         if (i === 0) {
             element.classList.add("typing-active");
         }
@@ -242,10 +248,7 @@
             element.innerHTML += characters[i];
             setTimeout(() => typeWriter(element, text, i + 1, callback), typingSpeed);
         } else {
-            // Remove the blinking cursor the exact millisecond the typing is done
             element.classList.remove("typing-active");
-            
-            // Add the bouncing dots to load while it waits
             element.innerHTML += '<span class="bounce-dot">.</span><span class="bounce-dot">.</span><span class="bounce-dot">.</span>';
             setTimeout(callback, pauseBetweenPhrases);
         }
@@ -268,26 +271,22 @@
     window.onload = startSequence;
 
 
-    /* --- NEW: Audio Trigger Logic with Fade-in --- */
+    /* --- Audio Trigger Logic with Fade-in --- */
     const bgMusic = document.getElementById("bg-music");
     let isMusicPlaying = false; 
 
     function startMusic() {
         if (!isMusicPlaying) {
             bgMusic.currentTime = 5; 
-            bgMusic.volume = 0; // NEW: Start the volume at 0
+            bgMusic.volume = 0; 
             
             bgMusic.play().catch(e => console.log("Audio error:", e));
             isMusicPlaying = true; 
             
-            // NEW: Gradually increase the volume every 100ms
             const fadeAudio = setInterval(() => {
-                // If volume is less than 1 (max), increase it slightly
                 if (bgMusic.volume < 1.0) {
-                    // Use Math.min to ensure it never accidentally goes over 1.0
                     bgMusic.volume = Math.min(1.0, bgMusic.volume + 0.05);
                 } else {
-                    // Once it hits 1.0, stop the interval timer
                     clearInterval(fadeAudio);
                 }
             }, 100); 
@@ -325,7 +324,6 @@
                 typeWriter(questionText, endPhrase4, 0, () => {
                 questionText.innerHTML = ""; 
                 typeWriter(questionText, endPhrase5, 0, () => {
-                    // Final reveal! (No cursor will be active here)
                     questionText.innerHTML = finalDateText; 
                          });
                     });
